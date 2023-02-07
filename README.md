@@ -10,7 +10,8 @@ You need to have the following installed on your machine:
 `NodeJS`
 `npm (Node Package Manager)`
 
-`MongoDB Compass` for DB
+`MongoDB Compass` for DB (check bottom part for the details
+)
 
 <h2>Installing</h2>
 Follow these steps to install the project on your local machine:
@@ -45,5 +46,18 @@ The application should now be running on http://localhost:3000/
 
  `npm start`
  
+ <h2>Database</h2>
+
+<h3>Created a Copy of user data named MyData inside the root folder</h3>
+1. Kindly import jason data or query manully for now if wanna try it o your end. 
+
+
+Note: 
+- Not that yet familliar sa backend, Any critiques will be taken gladly. 
+- No API doc yet and so on.
+
+Progress: 
+- Initial Backend API endpoint are added, Will focus next on UI/UX then some backend adjustments.
+
 
 
