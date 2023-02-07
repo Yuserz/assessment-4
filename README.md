@@ -19,11 +19,11 @@ Follow these steps to install the project on your local machine:
 
 <h3>1. Clone the repository to your local machine</h3>
 
-`git clone https://github.com/your-repository-url`
+`git clone https://github.com/Yuserz/assessment-4.git`
 
 <h3>2. Navigate to the project directory</h3>
-
- `cd react-js-crud-app`
+ `open folder using IDE(VScode)`
+ 
 <h3>3. Install the required dependencies</h3>
 
 `npm install`
