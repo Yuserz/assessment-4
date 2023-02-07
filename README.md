@@ -10,8 +10,6 @@ You need to have the following installed on your machine:
 `NodeJS`
 `npm (Node Package Manager)`
 
-also 
-
 `MongoDB Compass` for DB
 
 <h2>Installing</h2>
