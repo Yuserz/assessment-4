@@ -36,14 +36,14 @@ The application should now be running on http://localhost:3000/
 
 <h2> Client </h2>
 
-<h3>2. Navigate to the project directory</h3>
+<h3>1. Navigate to the project directory</h3>
 
  `cd client`
-<h3>3. Install the required dependencies</h3>
+<h3>2. Install the required dependencies</h3>
 
 `npm install`
 
-<h3>4. Start the development server</h3>
+<h3>3. Start the development server</h3>
 
  `npm start`
  
