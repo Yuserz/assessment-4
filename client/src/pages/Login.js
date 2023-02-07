@@ -1,20 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { InputField } from "../components";
-import swal from "sweetalert2";
+import Swal from "sweetalert2";
+import { getData, createData, updateData, deleteData } from "../api";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ isAuthenticated, onLogin }) => {
-  const [username, setUsername] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [data, setData] = useState("");
+  const user = data;
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const GetData = async () => {
+      const response = await getData({ email, password });
+      setData(response);
+    };
+    GetData();
+  }, []);
+
+  console.log(user);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin(username, password);
+    try {
+      let match = false;
+      for (let i = 0; i < user.data.length; i++) {
+        if (
+          user.data[i].email === email &&
+          user.data[i].password === password
+        ) {
+          match = true;
+          break;
+        }
+      }
+      if (match) {
+        // const Toast = Swal.mixin({
+        //   toast: true,
+        //   position: "top-end",
+        //   showConfirmButton: false,
+        //   timer: 3000,
+        //   timerProgressBar: false,
+        //   didOpen: (toast) => {
+        //     toast.addEventListener("mouseenter", Swal.stopTimer);
+        //     toast.addEventListener("mouseleave", Swal.resumeTimer);
+        //   },
+        // });
+        // Toast.fire({
+        //   icon: "success",
+        //   title: "!",
+        // });
+
+        navigate("Home");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Wrong Email or password",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong, please try again later",
+      });
+    }
   };
 
-  if (isAuthenticated) {
-    return <Navigate to="/Home" />;
-  }
+  // if (isAuthenticated) {
+  //   return <Navigate to="/Home" />;
+  // }
 
   return (
     <div className="absolute bg-black/5 w-screen h-full top-0 left-0">
@@ -29,9 +88,9 @@ const Login = ({ isAuthenticated, onLogin }) => {
             <div className="mb-6">
               <InputField
                 type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="mb-6">
@@ -45,7 +104,6 @@ const Login = ({ isAuthenticated, onLogin }) => {
             <div className="text-center lg:text-left">
               <button
                 type="submit"
-                // onClick={handleSubmit}
                 className="bg-gray-700 hover:bg-gray-800 text-white max-w-[400px] w-full rounded-md p-4 shadow-md hover:shadow-xl font-bold text-xl"
               >
                 Login

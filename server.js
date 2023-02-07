@@ -1,13 +1,19 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongodb = require("mongodb");
 const { mongo } = require("mongoose");
 const MongoClient = mongodb.MongoClient;
-
 const app = express();
 const port = 3000;
 const url = "mongodb://localhost:27017";
 
+const corsOptions = {
+  origin: "http://localhost:3001",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 let db;

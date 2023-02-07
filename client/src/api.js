@@ -6,13 +6,13 @@ const api = axios.create({
 });
 
 // Get all data
-export const getData = () => api.get('/api/data');
+export const getData = () => api.get('/api/users');
 
 // Create a new data item
-export const createData = payload => api.post('/api/data', payload);
+export const createData = payload => api.post('/api/users', payload);
 
 // Update an existing data item
-export const updateData = (id, payload) => api.put(`/api/data/${id}`, payload);
+export const updateData = (id, payload) => api.put(`/api/users/${id}`, payload);
 
 // Delete an existing data item
-export const deleteData = id => api.delete(`/api/data/${id}`);
+export const deleteData = id => api.delete(`/api/users/${id}`);
