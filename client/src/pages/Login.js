@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { InputField } from "../components";
+import swal from "sweetalert2";
 
 const Login = ({ isAuthenticated, onLogin }) => {
   const [username, setUsername] = useState("");

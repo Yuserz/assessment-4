@@ -1,22 +1,32 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { useState } from "react";
+import swal from "sweetalert2";
 import {
   Login,
-  LandingPage
+  Home
 } from "../src/pages"
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleLogin = (username, password) => {
-    // Add your authentication logic here
+    // authentication logic
     if(username === "admin" & password === "admin"){
       setIsAuthenticated(true);
+      // swal.fire({
+      //   icon: "success",
+      //   title: "Login success!",
+      // });
       
     }
     else{
       setIsAuthenticated(false);
-      console.log("username or password is wrong")
+      swal.fire({
+        icon: "error",
+        title: "Wrong username or password!",
+        text: "Please try again.",
+      });
     }
     
   };
@@ -24,7 +34,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={isAuthenticated ? <LandingPage /> : <Login onLogin={handleLogin} />} />
+        <Route exact path="/" element={isAuthenticated ? <Home /> : <Login onLogin={handleLogin} />} />
       </Routes>
     </Router>
   );
