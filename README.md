@@ -10,6 +10,10 @@ You need to have the following installed on your machine:
 `NodeJS`
 `npm (Node Package Manager)`
 
+also 
+
+`MongoDB Compass` for DB
+
 <h2>Installing</h2>
 Follow these steps to install the project on your local machine:
 
@@ -26,8 +30,22 @@ Follow these steps to install the project on your local machine:
 
 <h3>4. Start the development server</h3>
 
- `node app.js`
+ `nodemon`
  
 The application should now be running on http://localhost:3000/
 
 <h2> Client </h2>
+
+<h3>2. Navigate to the project directory</h3>
+
+ `cd client`
+<h3>3. Install the required dependencies</h3>
+
+`npm install`
+
+<h3>4. Start the development server</h3>
+
+ `npm start`
+ 
+
+
