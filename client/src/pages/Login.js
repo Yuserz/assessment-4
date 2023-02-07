@@ -104,12 +104,12 @@ const Login = () => {
             <div className="text-center lg:text-left">
               <button
                 type="submit"
-                className="bg-gray-700 hover:bg-gray-800 text-white max-w-[400px] w-full rounded-md p-4 shadow-md hover:shadow-xl font-bold text-xl"
+                className="bg-gray-700 hover:bg-gray-800 text-white w-full w-full rounded-md p-4 shadow-md hover:shadow-xl font-bold text-xl"
               >
                 Login
               </button>
             </div>
-            <Link to="/signup">Sign Up</Link>
+            {/* <Link to="/signup">Sign Up</Link> */}
           </form>
         </div>
       </div>
