@@ -80,10 +80,11 @@ const Login = () => {
       <div className="flex items-center justify-evenly  w-full h-full">
         <div className="flex flex-col items-center justify-center w-[30%] h-fit p-10 bg-white border shadow-lg  rounded-xl">
           <form className="w-full h-fit" onSubmit={handleSubmit}>
-            <div className="pb-10">
+            <div className="pb-6">
               <h1 className="text-3xl font-bold my-2 select-none text-center">
-                Welcome!
+                Welcome
               </h1>
+              <p className="text-sm text-center text-gray-700/40 mt-4 ">Please enter your credentials</p>
             </div>
             <div className="mb-6">
               <InputField
@@ -104,7 +105,7 @@ const Login = () => {
             <div className="text-center lg:text-left">
               <button
                 type="submit"
-                className="bg-gray-700 hover:bg-gray-800 text-white w-full w-full rounded-md p-4 shadow-md hover:shadow-xl font-bold text-xl"
+                className="bg-violet-400 hover:bg-violet-500 text-white w-full rounded-md p-4 shadow-md hover:shadow-xl font-bold text-xl"
               >
                 Login
               </button>
