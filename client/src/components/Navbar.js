@@ -13,22 +13,22 @@ export default function Navbar() {
     {
       id: "1",
       title: "Home",
-      path: "/",
+      path: "/Home",
     },
     {
       id: "2",
-      title: "Contacts",
-      path: "/Inventory",
-    }
+      title: "History",
+      path: "/ChatHistory",
+    }    
   ];
 
   
   return (
-    <nav className="flex h-full w-1/4">
-      <ul className="w-full h-full flex flex-col">
+    <nav className="flex h-fit w-full">
+      <ul className="w-full h-fit flex flex-col">
         {/* Use map() to generate the list items from the items array */}
         {items.map((item) => (
-          <li key={item.id} className=" p-4">
+          <li key={item.id} className="p-4 whitespace-nowrap">
             <NavLink
               to={item.path}
               // Use the styles object to determine the class name

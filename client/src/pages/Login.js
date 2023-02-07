@@ -13,7 +13,7 @@ const Login = ({ isAuthenticated, onLogin }) => {
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/LandingPage" />;
+    return <Navigate to="/Home" />;
   }
 
   return (
