@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { InputField } from "../components";
 import Swal from "sweetalert2";
-import { getData, createData, updateData, deleteData } from "../api";
+import { getData, createData, updateData, deleteData, login } from "../api";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -13,67 +13,27 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const GetData = async () => {
-      const response = await getData({ email, password });
-      setData(response);
-    };
-    GetData();
-  }, []);
-
-  console.log(user);
-
+  // Should use POST method for secure authentication and authorization
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      let match = false;
-      for (let i = 0; i < user.data.length; i++) {
-        if (
-          user.data[i].email === email &&
-          user.data[i].password === password
-        ) {
-          match = true;
-          break;
-        }
-      }
-      if (match) {
-        // const Toast = Swal.mixin({
-        //   toast: true,
-        //   position: "top-end",
-        //   showConfirmButton: false,
-        //   timer: 3000,
-        //   timerProgressBar: false,
-        //   didOpen: (toast) => {
-        //     toast.addEventListener("mouseenter", Swal.stopTimer);
-        //     toast.addEventListener("mouseleave", Swal.resumeTimer);
-        //   },
-        // });
-        // Toast.fire({
-        //   icon: "success",
-        //   title: "!",
-        // });
 
-        navigate("Home");
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Wrong Email or password",
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong, please try again later",
+    try {
+      const response = await login({
+        email,
+        password,
       });
+
+      const { token } = response.data;
+
+      // Store token in local storage
+      localStorage.setItem("token", token);
+
+      // Redirect user to the protected route
+      navigate("Home");
+    } catch (err) {
+      console.log("Invalid email or password");
     }
   };
-
-  // if (isAuthenticated) {
-  //   return <Navigate to="/Home" />;
-  // }
 
   return (
     <div className="absolute bg-black/5 w-screen h-full top-0 left-0">
@@ -84,7 +44,9 @@ const Login = () => {
               <h1 className="text-3xl font-bold my-2 select-none text-center">
                 Welcome
               </h1>
-              <p className="text-sm text-center text-gray-700/40 mt-4 ">Please enter your credentials</p>
+              <p className="text-sm text-center text-gray-700/40 mt-4 ">
+                Please enter your credentials
+              </p>
             </div>
             <div className="mb-6">
               <InputField

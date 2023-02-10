@@ -1,126 +1,153 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const mongodb = require("mongodb");
-const { mongo } = require("mongoose");
-const MongoClient = mongodb.MongoClient;
+const mongoose = require("mongoose");
+const helmet = require("helmet");
+const compression = require("compression");
 const app = express();
-const port = 3000;
-const url = "mongodb://localhost:27017";
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+// Set up environment variables
+const port = process.env.PORT || 3000;
+const mongodbUrl = process.env.MONGODB_URL || "mongodb://localhost:27017";
+const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3001";
 
 const corsOptions = {
-  origin: "http://localhost:3001",
+  origin: corsOrigin,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
+// Use middleware functions
+app.use(helmet());
+app.use(compression());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-let db;
+// Connect to MongoDB
+mongoose.connect(mongodbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-MongoClient.connect(url, { useNewUrlParser: true }, (error, client) => {
-  if (error) {
-    console.log("Error connecting to MongoDB: ", error);
-    return;
-  }
-
-  db = client.db("MyData");
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
   console.log("Connected to MongoDB successfully.");
+});
 
-  //Schema
-  const emailAndPasswordSchema = {
-    email: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-  };
+// Define the user schema
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
 
-  //POST method
-  //Define a new collection to store the email and password
-  const collection = db.collection("user");
+// Compile the schema into a model
+//First param is the collection name
+const User = mongoose.model("user", userSchema);
 
-  //Create Data
-  app.post("/api/users", (req, res) => {
-    const { email, password } = req.body;
-
-    // Validate the request body against the schema
-    if (!email || !password) {
-      return res
-        .status(400)
-        .send({ error: "Both email and password are required" });
+// POST method to create a new user
+app.post("/api/users", async (req, res, next) => {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    req.body.password = hashedPassword;
+    const user = new User(req.body);
+    await user.save();
+    res.send({ success: "Email and password stored successfully" });
+  } catch (error) {
+    if (error.name === "MongoError" && error.code === 11000) {
+      res.status(500).send({ error: "Email is already taken" });
+    } else {
+      next(error);
     }
+  }
+});
+// GET method to retrieve all users
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
-    collection
-      .insertOne({ email, password })
-      .then((result) => {
-        res.send({ success: "Email and password stored successfully" });
-      })
-      .catch((error) => {
-        console.log(
-          "Error inserting email and password into the database: ",
-          error
-        );
-        res.status(500).send({
-          error: "Error inserting email and password into the database",
-        });
-      });
-  });
+// GET method to retrieve a single user by email
+app.get("/api/users/:email", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) {
+      res.status(404).send({ error: "User not found" });
+    } else {
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
-  //Get all users data
-  app.get("/api/users", (req, res) => {
-    db.collection("user")
-      .find({})
-      .toArray((error, result) => {
-        if (error) {
-          console.log("Error retrieving data from the database: ", error);
-          return;
-        }
-        res.send(result);
-      });
-  });
+// DELETE method to delete a single user by email
+app.delete("/api/users/:email", async (req, res) => {
+  try {
+    const user = await User.findOneAndRemove({ email: req.params.email });
+    if (!user) {
+      res.status(404).send({ error: "User not found" });
+    } else {
+      res.send({ success: "User deleted successfully" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
-  //Delete user with id
-  app.delete("/api/users/:id", (req, res) => {
-    const id = req.params.id;
-    collection
-      .deleteOne({ _id: new mongodb.ObjectId(id) })
-      .then((result) => {
-        res.send({ success: "Data deleted successfully" });
-      })
-      .catch((error) => {
-        console.log("Error deleting data from the database: ", error);
-        res
-          .status(500)
-          .send({ error: "Error deleting data from the database" });
-      });
-  });
-
-  //Update user data
-  app.put("/api/users/:id", (req, res) => {
-    const id = req.params.id;
-    const userUpdates = req.body;
-
-    db.collection("user").findOneAndUpdate(
-      { _id: mongodb.ObjectId(id) },
-      { $set: userUpdates },
-      { returnOriginal: false },
-      (error, result) => {
-        if (error) {
-          console.log("Error updating user: ", error);
-          res.status(500).send({ error: "Error updating user" });
-          return;
-        }
-
-        res.send(result.value);
-      }
+// PATCH method to update a single user by email
+app.patch("/api/users/:email", async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { email: req.params.email },
+      req.body,
+      { new: true }
     );
-  });
+    if (!user) {
+      res.status(404).send({ error: "User not found" });
+    } else {
+      res.send({ success: "User updated successfully" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+//Login Endpoint
+app.post("/api/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).send({ error: "Email or password is incorrect" });
+    }
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(401).send({ error: "Email or password is incorrect" });
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "12345", {
+      expiresIn: "1h",
+    });
+    res.send({ success: "User logged in successfully", token });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
