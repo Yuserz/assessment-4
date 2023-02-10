@@ -1,4 +1,4 @@
-<h1>React JS CRUD Application</h1>
+<h1>Simple Chat App using React JS and Node JS</h1>
 This is a basic CRUD (Create, Read, Update, Delete) application built with React JS. It includes a Login page where the user can enter their credentials to access the CRUD operations.
 
 <h2>Getting Started</h2>
