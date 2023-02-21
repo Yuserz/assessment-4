@@ -49,7 +49,7 @@ The application should now be running on http://localhost:3000/
  <h2>Database</h2>
 
 <h3>Created a Copy of user data named MyData inside the root folder</h3>
-1. Kindly import json data or query manully for now if wanna try it o your end. 
+1. Kindly import json data or query manully for now if wanna try it on your end. 
 
 
 Note: 
